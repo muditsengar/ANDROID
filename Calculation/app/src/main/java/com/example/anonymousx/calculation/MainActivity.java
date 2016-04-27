@@ -8,9 +8,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    TextView text;
+    TextView text, ans;
     Button zero, one, two, three, four, five, six, seven, eight, nine, doubleZero, add, subtract,
             multiply, divide, point, result, delete, clear;
+    char operator;
+    double answer;
+    String p = "";
+    String s = "";
+    double i1, i2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         text = (TextView) findViewById(R.id.text);
+
+        ans = (TextView) findViewById(R.id.ans);
 
         zero = (Button) findViewById(R.id.zero);
         zero.setOnClickListener(new View.OnClickListener() {
@@ -112,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 char[] c1 = text.getText().toString().toCharArray();
+                operator = '+';
                 if (c1.length > 0) {
                     if (c1[c1.length - 1] != '+' && c1[c1.length - 1] != '-' &&
                             c1[c1.length - 1] != '/' && c1[c1.length - 1] != '*') {
@@ -121,6 +129,10 @@ public class MainActivity extends AppCompatActivity {
                         text.setText(String.valueOf(c1));
                     }
                 }
+                add.setEnabled(false);
+                subtract.setEnabled(false);
+                multiply.setEnabled(false);
+                divide.setEnabled(false);
             }
         });
 
@@ -129,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 char[] c1 = text.getText().toString().toCharArray();
+                operator = '-';
                 if (c1.length > 0) {
                     if (c1[c1.length - 1] != '+' && c1[c1.length - 1] != '-' &&
                             c1[c1.length - 1] != '/' && c1[c1.length - 1] != '*') {
@@ -138,6 +151,10 @@ public class MainActivity extends AppCompatActivity {
                         text.setText(String.valueOf(c1));
                     }
                 }
+                add.setEnabled(false);
+                subtract.setEnabled(false);
+                multiply.setEnabled(false);
+                divide.setEnabled(false);
             }
         });
 
@@ -146,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 char[] c1 = text.getText().toString().toCharArray();
+                operator = '*';
                 if (c1.length > 0) {
                     if (c1[c1.length - 1] != '+' && c1[c1.length - 1] != '-' &&
                             c1[c1.length - 1] != '/' && c1[c1.length - 1] != '*') {
@@ -155,6 +173,10 @@ public class MainActivity extends AppCompatActivity {
                         text.setText(String.valueOf(c1));
                     }
                 }
+                add.setEnabled(false);
+                subtract.setEnabled(false);
+                multiply.setEnabled(false);
+                divide.setEnabled(false);
             }
         });
 
@@ -163,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 char[] c1 = text.getText().toString().toCharArray();
+                operator = '/';
                 if (c1.length > 0) {
                     if (c1[c1.length - 1] != '+' && c1[c1.length - 1] != '-' &&
                             c1[c1.length - 1] != '/' && c1[c1.length - 1] != '*') {
@@ -172,6 +195,10 @@ public class MainActivity extends AppCompatActivity {
                         text.setText(String.valueOf(c1));
                     }
                 }
+                add.setEnabled(false);
+                subtract.setEnabled(false);
+                multiply.setEnabled(false);
+                divide.setEnabled(false);
             }
         });
 
@@ -181,20 +208,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 char[] c1 = text.getText().toString().toCharArray();
                 if (c1.length > 0) {
-                    if (c1[c1.length - 1] != '.') {
-                        text.setText(text.getText() + ".");
+                    if (!text.getText().toString().contains(".")) {
+                        if (c1[c1.length - 1] != '.') {
+                            text.setText(text.getText() + ".");
+                        }
                     }
                 }
-            }
-        });
 
-        result = (Button) findViewById(R.id.result);
-        result.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Integer number = Integer.parseInt(text.getText().toString());
-                Log.d("number", String.valueOf(number));
-                text.setText(text.getText() + " = " + number);
             }
         });
 
@@ -210,6 +230,15 @@ public class MainActivity extends AppCompatActivity {
                     }
                     String newT = String.valueOf(newText);
                     text.setText(newT);
+                    if ((originalText[originalText.length - 1] == '+') ||
+                            (originalText[originalText.length - 1] == '-') ||
+                            (originalText[originalText.length - 1] == '*') ||
+                            (originalText[originalText.length - 1] == '/')) {
+                        add.setEnabled(true);
+                        subtract.setEnabled(true);
+                        multiply.setEnabled(true);
+                        divide.setEnabled(true);
+                    }
                 }
             }
         });
@@ -219,7 +248,64 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 text.setText("");
+                add.setEnabled(true);
+                subtract.setEnabled(true);
+                multiply.setEnabled(true);
+                divide.setEnabled(true);
             }
         });
+
+        result = (Button) findViewById(R.id.result);
+        result.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                char[] c = text.getText().toString().toCharArray();
+                if (String.valueOf(c).contains("+") || String.valueOf(c).contains("-") ||
+                        String.valueOf(c).contains("*") || String.valueOf(c).contains("/")) {
+                    Log.d("cArray", String.valueOf(c));
+                    for (int i = 0; i < c.length; i++) {
+                        if (c[i] == '+' || c[i] == '-' || c[i] == '/' || c[i] == '*') {
+                            for (int j = 0; j < i; j++) {
+                                p += String.valueOf(c[j]);
+                            }
+                            for (int j = i + 1; j < c.length; j++) {
+                                s += String.valueOf(c[j]);
+                            }
+                        }
+                    }
+
+                    i1 = Long.parseLong(p);
+                    i2 = Long.parseLong(s);
+                    Log.d("i1", String.valueOf(i1));
+                    Log.d("i1", String.valueOf(i2));
+                    Log.d("valueOf", p);
+                    Log.d("operator", String.valueOf(operator));
+
+                    if (operator == '+') {
+                        answer = i1 + i2;
+                        Log.d("answer", String.valueOf(answer));
+                        ans.setText(String.valueOf(answer));
+                    }
+                    if (operator == '-') {
+                        answer = i1 - i2;
+                        Log.d("answer", String.valueOf(answer));
+                        ans.setText(String.valueOf(answer));
+                    }
+                    if (operator == '*') {
+                        answer = i1 * i2;
+                        Log.d("answer", String.valueOf(answer));
+                        ans.setText(String.valueOf(answer));
+                    }
+                    if (operator == '/') {
+                        if (i2 != 0 || i2 != 00) {
+                            answer = i1 / i2;
+                            Log.d("answer", String.valueOf(answer));
+                            ans.setText(String.valueOf(answer));
+                        }
+                    }
+                } else ans.setText(text.getText());
+            }
+        });
+
     }
 }
